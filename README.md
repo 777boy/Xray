@@ -44,6 +44,7 @@
 # 使用
 
 ```shell
+apk add wget
 bash <(wget -qO- -o- https://github.com/777boy/Xray/raw/main/install.sh)
 ```
 原文档：https://233boy.com/xray/xray-script/
