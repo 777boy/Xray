@@ -767,13 +767,13 @@ uninstall() {
     fi
     manage stop &>/dev/null
     manage disable &>/dev/null
-    rm -rf $is_core_dir $is_log_dir $is_sh_bin /lib/systemd/system/$is_core.service
+    rm -rf $is_core_dir $is_log_dir $is_sh_bin /etc/init.d/$is_core
     sed -i "/alias $is_core=/d" /root/.bashrc
     # uninstall caddy; 2 is ask result
     if [[ $REPLY == '2' ]]; then
         manage stop caddy &>/dev/null
         manage disable caddy &>/dev/null
-        rm -rf $is_caddy_dir $is_caddy_bin /lib/systemd/system/caddy.service
+        rm -rf $is_caddy_dir $is_caddy_bin /etc/init.d/caddy
     fi
     [[ $is_install_sh ]] && return # reinstall
     _green "\n卸载完成!"
@@ -816,7 +816,7 @@ manage() {
         is_do_name_msg=$is_core_name
         ;;
     esac
-    systemctl $is_do $is_do_name
+    rc-service $is_do_name $is_do
     [[ $is_test_run && ! $is_new_install ]] && {
         sleep 2
         if [[ ! $(pgrep -f $is_run_bin) ]]; then
@@ -1406,9 +1406,10 @@ get() {
         bash <<<$is_install_sh
         ;;
     test-run)
-        systemctl list-units --full -all &>/dev/null
+        # systemctl list-units --full -all &>/dev/null
+        rc-status --all &>/dev/null
         [[ $? != 0 ]] && {
-            _yellow "\n无法执行测试, 请检查 systemctl 状态.\n"
+            _yellow "\n无法执行测试, 请检查 OpenRc 状态.\n"
             return
         }
         is_no_manage_msg=1
@@ -1575,7 +1576,7 @@ url_qr() {
             if [[ $(type -P qrencode) ]]; then
                 qrencode -t ANSI "${is_url}"
             else
-                msg "请安装 qrencode: $(_green "$cmd update -y; $cmd install qrencode -y")"
+                msg "请安装 qrencode: $(_green "$cmd update -y; $cmd add qrencode -y")"
             fi
             msg
             msg "如果无法正常显示或识别, 请使用下面的链接来生成二维码:"

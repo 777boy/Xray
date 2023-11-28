@@ -1,7 +1,7 @@
 #!/bin/bash
 
-author=233boy
-# github=https://github.com/233boy/xray
+author=777boy
+# github=https://github.com/777boy/Xray
 
 # bash fonts colors
 red='\e[31m'
@@ -34,13 +34,13 @@ warn() {
 # root
 [[ $EUID != 0 ]] && err "当前非 ${yellow}ROOT用户.${none}"
 
-# yum or apt-get, ubuntu/debian/centos
-cmd=$(type -P apt-get || type -P yum)
-[[ ! $cmd ]] && err "此脚本仅支持 ${yellow}(Ubuntu or Debian or CentOS)${none}."
+# apk Alpine
+cmd=$(type -P apk)
+[[ ! $cmd ]] && err "此脚本仅支持 ${yellow}(Alpine)${none}."
 
-# systemd
-[[ ! $(type -P systemctl) ]] && {
-    err "此系统缺少 ${yellow}(systemctl)${none}, 请尝试执行:${yellow} ${cmd} update -y;${cmd} install systemd -y ${none}来修复此错误."
+# OpenRc
+[[ ! $(type -P openrc) ]] && {
+    err "此系统缺少 ${yellow}(OpenRc)${none}, 请尝试执行:${yellow} ${cmd} update -y;${cmd} add openrc ${none}来修复此错误."
 }
 
 # wget installed or none
@@ -143,11 +143,11 @@ install_pkg() {
     if [[ $cmd_not_found ]]; then
         pkg=$(echo $cmd_not_found | sed 's/,/ /g')
         msg warn "安装依赖包 >${pkg}"
-        $cmd install -y $pkg &>/dev/null
+        $cmd add -y $pkg &>/dev/null
         if [[ $? != 0 ]]; then
-            [[ $cmd =~ yum ]] && yum install epel-release -y &>/dev/null
+            [[ $cmd =~ yum ]] && yum install epel-release -y &>/dev/null #多余
             $cmd update -y &>/dev/null
-            $cmd install -y $pkg &>/dev/null
+            $cmd add -y $pkg &>/dev/null
             [[ $? == 0 ]] && >$is_pkg_ok
         else
             >$is_pkg_ok

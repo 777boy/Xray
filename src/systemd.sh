@@ -3,57 +3,60 @@ install_service() {
     xray | v2ray)
         is_doc_site=https://xtls.github.io/
         [[ $1 == 'v2ray' ]] && is_doc_site=https://www.v2fly.org/
-        cat >/lib/systemd/system/$is_core.service <<<"
-[Unit]
-Description=$is_core_name Service
-Documentation=$is_doc_site
-After=network.target nss-lookup.target
+        echo -e "#!/sbin/openrc-run
 
-[Service]
-#User=nobody
-User=root
-NoNewPrivileges=true
-ExecStart=$is_core_bin run -config $is_config_json -confdir $is_conf_dir
-Restart=on-failure
-RestartPreventExitStatus=23
-LimitNPROC=10000
-LimitNOFILE=1048576
-PrivateTmp=true
-ProtectSystem=full
-#CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-#AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+name=\""$is_core"\"
+command=\""$is_core_bin"\"
+command_args=\"run -config "$is_config_json" -confdir "$is_conf_dir"\"
+command_user=\"root\"
 
-[Install]
-WantedBy=multi-user.target"
+depend() {
+    need net
+    after firewall
+}
+
+start_pre() {
+    # 这里可以添加脚本启动前的准备工作
+    return 0
+}
+
+stop_pre() {
+    # 这里可以添加脚本停止后的清理工作
+    return 0
+}
+" >/etc/init.d/$is_core
         ;;
     caddy)
-        cat >/lib/systemd/system/caddy.service <<<"
-#https://github.com/caddyserver/dist/blob/master/init/caddy.service
-[Unit]
-Description=Caddy
-Documentation=https://caddyserver.com/docs/
-After=network.target network-online.target
-Requires=network-online.target
+        echo -e "#!/sbin/openrc-run
 
-[Service]
-Type=notify
-User=root
-Group=root
-ExecStart=$is_caddy_bin run --environ --config $is_caddyfile
-ExecReload=$is_caddy_bin reload --config $is_caddyfile
-TimeoutStopSec=5s
-LimitNPROC=10000
-LimitNOFILE=1048576
-PrivateTmp=true
-ProtectSystem=full
-#AmbientCapabilities=CAP_NET_BIND_SERVICE
+#https://github.com/caddyserver/dist/blob/master/init/caddy.service and ChatGPT
 
-[Install]
-WantedBy=multi-user.target"
+name=\"caddy\"
+command=\""$is_caddy_bin"\"
+command_args=\"run --environ --config "$is_caddyfile" &\"
+command_user=\"root\"
+
+depend() {
+    need net
+    after firewall
+}
+
+start_pre() {
+    # 这里可以添加脚本启动前的准备工作
+    return 0
+}
+
+stop_pre() {
+    # 这里可以添加脚本停止后的清理工作
+    return 0
+}
+" >/etc/init.d/caddy
         ;;
     esac
 
     # enable, reload
-    systemctl enable $1
-    systemctl daemon-reload
+    chmod a+x /etc/init.d/$is_core
+    chmod a+x /etc/init.d/caddy
+    rc-update add $1 default
+    rc-service $is_core start
 }

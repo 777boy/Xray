@@ -47,8 +47,8 @@ warn() {
     echo -e "\n$is_warn $@\n"
 }
 
-# yum or apt-get
-cmd=$(type -P apt-get || type -P yum)
+# apk
+cmd=$(type -P apk)
 
 # x64
 case $(arch) in
@@ -82,7 +82,8 @@ is_caddy_dir=/etc/caddy
 is_caddy_repo=caddyserver/caddy
 is_caddyfile=$is_caddy_dir/Caddyfile
 is_caddy_conf=$is_caddy_dir/$author
-is_caddy_service=$(systemctl list-units --full -all | grep caddy.service)
+is_caddy_service=$(rc-status --all | grep caddy)
+# is_caddy_service=$(systemctl list-units --full -all | grep caddy.service)
 tlsport=443
 
 # core ver

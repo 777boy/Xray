@@ -1,6 +1,6 @@
 # 介绍
 
-最好用的 Xray 一键安装脚本 & 管理脚本
+最好用的 Xray 一键安装脚本 & 管理脚本 (Alpine)
 
 # 特点
 
@@ -41,9 +41,12 @@
 
 脚本的参数非常高效率并且超级易用，请掌握参数的使用
 
-# 文档
+# 使用
 
-安装及使用：https://233boy.com/xray/xray-script/
+```shell
+bash <(wget -qO- -o- https://github.com/777boy/Xray/raw/main/install.sh)
+```
+原文档：https://233boy.com/xray/xray-script/
 
 # 帮助
 
@@ -119,3 +122,8 @@ Usage: xray [options]... [args]...
 反馈问题) https://github.com/233boy/xray/issues
 文档(doc) https://233boy.com/xray/xray-script/
 ```
+
+# 已知问题
+- xray、caddy运行状态未进行匹配
+- caddy暂时未测试
+- 运行xray后需手动回车跳出运行echo
