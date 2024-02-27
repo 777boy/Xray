@@ -125,6 +125,5 @@ Usage: xray [options]... [args]...
 ```
 
 # 已知问题
-- xray、caddy运行状态未进行匹配
 - caddy暂时未测试
 - 运行xray后需手动回车跳出运行echo
