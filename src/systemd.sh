@@ -7,7 +7,7 @@ install_service() {
 
 name=\""$is_core"\"
 command=\""$is_core_bin"\"
-command_args=\"run -config "$is_config_json" -confdir "$is_conf_dir"\"
+command_args=\"run -config "$is_config_json" -confdir "$is_conf_dir" > /dev/null 2>&1 &\"
 command_user=\"root\"
 
 depend() {
